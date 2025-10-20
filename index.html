@@ -40,20 +40,20 @@
       100% { opacity: 0; }
     }
     .container {
-      padding: 20px auto;
+      padding: 20px;
     }
     .question {
-      margin: 20px auto;
+      margin: 20px;
       background: #fff3e0;
-      padding: 20px auto;
+      padding: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      max-width: 800px;
+      max-width: 800px auto;
       display: none;
       text-align: center;
     }
     .emoji {
-      font-size: 80px;
+      font-size: 100px;
       margin: 10px auto;
       animation: bounceZoom 2s infinite;
     }
@@ -67,13 +67,13 @@
     .quiz-option {
       display: block;
       background: #f8c471;
-      margin: 8px auto;
+      margin: 8px;
       padding: 12px;
       border-radius: 10px;
       cursor: pointer;
       font-size: 20px;
       transition: transform 0.2s, background 0.2s;
-      max-width: 400px auto;
+      max-width: 400px;
     }
     .quiz-option:hover {
       background: #f5b041;
@@ -113,7 +113,7 @@
       margin: 20px auto;
       text-align: left;
     }
-    .emoji-small {
+    .emoji-big {
       font-size: 60px auto;
     }
     .answer-block{
@@ -162,8 +162,15 @@
     <h1></h1>
     <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;आधुनिककक्षायां सुस्वागतम्  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
   </header>
+<div id="candidate-section" style="background:#fff3e0; padding:20px; text-align:left; max-width:800px; margin:20px auto; border-radius:12px;">
+  <h2 style="text-align:center;">ପ୍ରବେଶ ପୃଷ୍ଠା (Candidate Page)</h2>
+  <label>ନାମ (Name): <input type="text" id="cand-name" style="margin: 5px 10px; padding:5px;"></label><br><br>
+  <label>ରୋଲ୍ ନମ୍ବର୍ (Roll No.): <input type="text" id="cand-roll" style="margin: 5px 10px; padding:5px;"></label><br><br>
+  <label>ଶ୍ରେଣୀ (Class): <input type="text" id="cand-class" style="margin: 5px 10px; padding:5px;"></label><br><br>
+  <button onclick="startExam()" style="background:#e67e22; color:white; padding:10px 20px; border:none; border-radius:8px;">ପରିକ୍ଷା ଆରମ୍ଭ କର</button>
+</div>
 
-  <div class="container">
+  <div id="exam-content" class="container" style="display:none;">
     <div id="quiz"></div>
 
     <div class="controls">
@@ -177,6 +184,14 @@
     <div id="results">
       <h3>भवतः उत्तराणि</h3>
       <div id="answers"></div>
+      <div style="margin-top:20px; text-align:center;">
+  <button onclick="window.print()" style="background:#27ae60;">🖨️ ପ୍ରିଣ୍ଟ୍</button>
+  <button onclick="shareResult()" style="background:#2980b9;">🔗 ଅଂଶୀଦାର କର</button>
+     <h3>ଅଭିଯାର୍ଥୀ ବିବରଣୀ (Candidate Details)</h3>
+<p><strong>ନାମ:</strong> <span id="res-name"></span> &nbsp;&nbsp; <strong>ରୋଲ୍:</strong> <span id="res-roll"></span> &nbsp;&nbsp; <strong>ଶ୍ରେଣୀ:</strong> <span id="res-class"></span></p>
+        
+      </div>
+      
     </div>
   </div>
 
@@ -305,7 +320,10 @@ questions.forEach(q => {
       marked++;
       updateStatus();
     }
-
+document.getElementById("res-name").innerText = document.getElementById("cand-name").value;
+document.getElementById("res-roll").innerText = document.getElementById("cand-roll").value;
+document.getElementById("res-class").innerText = document.getElementById("cand-class").value;
+    
     function finishExam() {
       let correctCount = 0;
       let answers = "";
@@ -338,11 +356,46 @@ questions.forEach(q => {
       document.getElementById("results").style.display = "block";
       window.scrollTo({top:0,behavior:'smooth'});
     }
+function startExam() {
+  const name = document.getElementById("cand-name").value.trim();
+  const roll = document.getElementById("cand-roll").value.trim();
+  const cls = document.getElementById("cand-class").value.trim();
 
+  if (!name || !roll || !cls) {
+    alert("ଦୟାକରି ସମସ୍ତ ତଥ୍ୟ ଭରଣ କରନ୍ତୁ।");
+    return;
+  }
+
+  document.getElementById("candidate-section").style.display = "none";
+  document.getElementById("exam-content").style.display = "block";
+  showQuestion(current);
+  updateStatus();
+}
+
+function shareResult() {
+  const name = document.getElementById("cand-name").value.trim();
+  const correctCount = Object.entries(answersMap).filter(([qNum, ans], index) => {
+    const q = questions[qNum - 1];
+    return ans === q.options[q.answer];
+  }).length;
+
+  const text = `🔔 ନାମ: ${name}\n📊 ଫଳାଫଳ: ${correctCount} / ${questions.length}\nजयतु संस्कृतम् 🇮🇳`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "ମୋର ପରୀକ୍ଷା ଫଳାଫଳ",
+      text: text
+    }).catch(err => console.log('Share canceled or failed', err));
+  } else {
+    alert("Sharing not supported on this browser.");
+  }
+    }
+    
     showQuestion(current);
     updateStatus();
   </script>
 </body>
 </html>
+
 
 
