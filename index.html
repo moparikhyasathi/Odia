@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="sa">
+<head>
+  <meta charset="UTF-8">
+  <title>संस्कृत परीक्षा</title>
+      
+  <style>
+    body {
+      background-color: orange;
+      font-family: "Noto Sans Devanagari", sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    header {
+      padding: 20px;
+      background: #d35400;
+      color: white;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      animation: glow 6s infinite;
+    }
+    @keyframes glow {
+      0% { color: #fff; text-shadow: 0 0 10px red; }
+      25% { color: #ff0; text-shadow: 0 0 20px green; }
+      50% { color: #0ff; text-shadow: 0 0 20px blue; }
+      75% { color: #f0f; text-shadow: 0 0 20px purple; }
+      100% { color: #fff; text-shadow: 0 0 10px red; }
+    }
+    h2 {
+      margin: 5px 0;
+      font-size: 20px;
+      animation: fadeInOut 6s infinite;
+    }
+    @keyframes fadeInOut {
+      0%, 45% { opacity: 0; }
+      50%, 95% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .container {
+      padding: 20px;
+    }
+    .question {
+      margin: 20px auto;
+      background: #fff3e0;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      max-width: 600px;
+      display: none;
+      text-align: center;
+    }
+    .emoji {
+      font-size: 40px;
+      margin: 10px auto;
+      animation: bounceZoom 2s infinite;
+    }
+    @keyframes bounceZoom {
+      0%   { transform: scale(1) translateY(0); }
+      25%  { transform: scale(1.2) translateY(-10px); }
+      50%  { transform: scale(1) translateY(0); }
+      75%  { transform: scale(1.1) translateY(-5px); }
+      100% { transform: scale(1) translateY(0); }
+    }
+    .quiz-option {
+      display: block;
+      background: #f8c471;
+      margin: 8px auto;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.2s, background 0.2s;
+      max-width: 400px;
+    }
+    .quiz-option:hover {
+      background: #f5b041;
+      transform: scale(1.05);
+    }
+    .quiz-option.selected {
+      background: #d35400;
+      color: white;
+      font-weight: bold;
+    }
+    .controls {
+      margin-top: 20px;
+    }
+    .controls button {
+      margin: 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #e67e22;
+      color: white;
+      font-size: 14px;
+    }
+    .controls button:hover {
+      background: #ca6f1e;
+    }
+    .status {
+      margin: 20px;
+      font-weight: bold;
+    }
+    #results {
+      display: none;
+      background: #fff3e0;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 900px;
+      margin: 20px auto;
+      text-align: left;
+    }
+    .emoji-small {
+      font-size: 30px;
+    }
+    .answer-block{
+      border-bottom:1px solid #ccc;
+      padding:10px 0;
+    }
+    .right{color:green;font-weight:bold}
+    .wrong{color:red;font-weight:bold}
+    .summary{font-size:16px;margin-bottom:10px}
+    .q-header{display:flex;align-items:center;justify-content:space-between}
+    /* Congratulation popup */
+    #congrats {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      text-align: center;
+      font-size: 24px;
+      color: #e67e22;
+      animation: none;
+      z-index: 9999;
+    }
+    @keyframes popup {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    .flower {
+      font-size: 40px;
+      display: inline-block;
+      animation: float 2s infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>पि. एम्. श्री. राजाचैतन्यदेवनोडालसर्वकारीयउच्चविद्यालयः, नवरङ्गपुरम्</h1>
+    <h2>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;आधुनिककक्षायां सुस्वागतम्  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h2>
+  </header>
+
+  <div class="container">
+    <div id="quiz"></div>
+
+    <div class="controls">
+      <button onclick="prevQuestion()">ପୂର୍ବ ପ୍ରଶ୍ନ</button>
+      <button onclick="nextQuestion()">ପର ପ୍ରଶ୍ନ</button>
+      <button onclick="markReview()">ପୁଣି ଦେଖିବି</button>
+      <button onclick="finishExam()">ପରିକ୍ଷା ଶେଷ</button>
+    </div>
+    <div class="status" id="status">Attempted : 0 | Unattempted: 0 | Review: 0</div>
+
+    <div id="results">
+      <h3>भवतः उत्तराणि</h3>
+      <div id="answers"></div>
+    </div>
+  </div>
+
+  <div id="congrats">
+    <div class="flower">🌸🌼🌺</div>
+    <p>💐 अभिनन्दनम्! 💐</p>
+    <div class="flower">🌺🌼🌸</div>
+  </div>
+
+  <script>
+    const questions = [
+      {emoji:"📕", options:["पुस्तकम्","फलम्","पात्रम्","दर्पणः"], answer:0},
+      {emoji:"✏️", options:["लेखनी","पादुकाः","मणिः","घटी"], answer:0},
+      {emoji:"🍎", options:["सेवफलम्","पुष्पम्","दीपः","घण्टा"], answer:0},
+      {emoji:"🌸", options:["पुष्पम्","फलम्","पत्रम्","शङ्खः"], answer:0},
+      {emoji:"👟", options:["पादुकाः","पुस्तकम्","घटी","लेखनी"], answer:0},
+      {emoji:"🍌", options:["कदलीफलम्","पत्रम्","कन्दुकः","शालिका"], answer:0},
+      {emoji:"⚽", options:["कन्दुकः","पुष्पम्","फलम्","मणिः"], answer:0},
+      {emoji:"🪞", options:["दर्पणः","लेखनी","पादुकाः","पत्रम्"], answer:0},
+      {emoji:"💡", options:["दीपः","फलम्","दर्पणः","कन्दुकः"], answer:0},
+      {emoji:"⏰", options:["घटी","पात्रम्","फलम्","पत्रम्"], answer:0},
+      {emoji:"💐", options:["पुष्पगुच्छम्","पात्रम्","फलम्","पत्रम्"], answer:0},
+{emoji:"⭐", options:["तारका","पात्रम्","फलम्","पत्रम्"], answer:0},
+{emoji:"☀️", options:["रविः","पात्रम्","चन्द्रः","पत्रम्"], answer:0},
+{emoji:"🐒", options:["वानरः","सोमः","सूर्यः","पत्रम्"], answer:0},
+{emoji:"🐅", options:["व्याघ्रः","सिंहः","श्वानः","पत्रम्"], answer:0},
+{emoji:"🌜", options:["चन्द्रः","पात्रम्","सूर्यः","पत्रम्"], answer:0},
+{emoji:"🧍", options:["वालिका","पात्रम्","चन्द्रः","पत्रम्"], answer:0},
+{emoji:"🚶", options:["वालकः","सोमः","सूर्यः","पत्रम्"], answer:0},
+{emoji:"🦮", options:["श्वानः","सिंहः","व्याघ्रः","पत्रम्"], answer:0},
+{emoji:"🐘", options:["गजः","श्वानः","सूर्यः","पत्रम्"], answer:0},
+{emoji:"🐀", options:["मुषकः","सर्पः","फलम्","मणिः"], answer:0},
+      {emoji:"🐎", options:["अश्वः","लेखनी","पादुकाः","पत्रम्"], answer:0},
+      {emoji:"🦌", options:["मृगः","श्वानः","देवः","कन्दुकः"], answer:0},
+      {emoji:"🐓", options:["कुकुटः","नरः","मिता","पत्रम्"], answer:0},
+      {emoji:"🦚", options:["मयुरः","अश्वः","मत्स्यः","पत्रम्"], answer:0},
+    ];
+
+    function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// shuffle options and adjust answer index
+questions.forEach(q => {
+  const correctAnswer = q.options[q.answer];
+  q.options = shuffleArray(q.options);
+  q.answer = q.options.indexOf(correctAnswer);
+});
+// shuffle questions (no repeat)
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    shuffle(questions);
+
+    const container = document.getElementById('quiz');
+    questions.forEach((q,i)=>{
+      const div = document.createElement('div');
+      div.className = 'question';
+      div.id = 'q'+(i+1);
+      div.innerHTML = `
+        <div class='q-header'>
+          <h3>Q${i+1}. संस्कृत नाम चयनं करोतु। (ସଂସ୍କୃତ ନାମ ଚୟନ କର)</h3>
+        </div>
+        <div class='emoji' aria-hidden='true'>${q.emoji}</div>
+        <div class='options'>
+          ${q.options.map((opt,j)=>`<div class='quiz-option' onclick='selectOption(${i+1}, this, ${q.answer})'>${opt}</div>`).join('')}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    let current = 1;
+    let attempted = 0, notAttempted = questions.length, marked = 0;
+    let answersMap = {};
+
+    function showQuestion(n){
+      document.querySelectorAll('.question').forEach(q=>q.style.display='none');
+      const el = document.getElementById('q'+n);
+      if(el) el.style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function updateStatus() {
+  attempted = Object.keys(answersMap).length;
+  notAttempted = questions.length - attempted;
+  document.getElementById("status").innerText = 
+      `ଉତ୍ତର ଦିଆଗଲା : ${attempted} | ଉତ୍ତର ଦିଆଯାଇ ନାହିଁ : ${notAttempted} | ପୁଣି ଦେଖିବାକୁ ରଖାଯାଇଛି : ${marked}`;
+}
+
+
+    function showCongrats() {
+      const congrats = document.getElementById("congrats");
+      congrats.style.animation = "popup 0.6s forwards";
+      setTimeout(()=>{ congrats.style.animation = "none"; congrats.style.transform="translate(-50%, -50%) scale(0)"; },2000);
+    }
+
+    function selectOption(qNum, element, correctIndex){
+      const options = document.querySelectorAll(`#q${qNum} .quiz-option`);
+      options.forEach(opt=>opt.classList.remove('selected'));
+      element.classList.add('selected');
+      answersMap[qNum] = element.innerText.trim();
+
+      const correctValue = options[correctIndex].innerText.trim();
+      if(element.innerText.trim() === correctValue){
+        showCongrats();
+      }
+      updateStatus();
+    }
+
+    function prevQuestion() {
+      if(current>1){ current--; showQuestion(current);} 
+    }
+
+    function nextQuestion() {
+      if(current<questions.length){ current++; showQuestion(current);} 
+    }
+
+    function markReview() {
+      marked++;
+      updateStatus();
+    }
+
+    function finishExam() {
+      let correctCount = 0;
+      let answers = "";
+
+      for(let i=0;i<questions.length;i++){
+        const qNum = i+1;
+        const q = questions[i];
+        const correctValue = q.options[q.answer];
+        const studentValue = answersMap[qNum] || null;
+        const isCorrect = studentValue !== null && studentValue === correctValue;
+        if(isCorrect) correctCount++;
+
+        const symbol = isCorrect ? '✅' : '❌';
+        const symbolClass = isCorrect ? 'right' : 'wrong';
+
+        answers += `<div class='answer-block'>
+          <div style='display:flex;justify-content:space-between;align-items:center'>
+            <div><strong>Q${qNum}.</strong></div>
+            <div class='emoji-small'>${q.emoji}</div>
+          </div>
+          <p>ଉତ୍ତର :- <span class='${symbolClass}'>${studentValue ? studentValue + ' ' + symbol : 'ଦିଆ ଯାଇ ନାହିଁ ❌'}</span></p>
+          <p>ଠିକ୍ ଉତ୍ତର <strong>${correctValue}</strong></p>
+          <p>ବିକଳ୍ପ ଗୁଡିକ ${q.options.join(', ')}</p>
+        </div>`;
+      }
+
+      const summary = `<div class='summary'><strong>योगफल:</strong> योग्य: ${correctCount} / ${questions.length} — प्रयत्नाः: ${attempted} — अनुत्तरित: ${notAttempted}</div>`;
+      document.getElementById("answers").innerHTML = summary + answers;
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("results").style.display = "block";
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    showQuestion(current);
+    updateStatus();
+  </script>
+</body>
+</html>
