@@ -1,401 +1,282 @@
 <!DOCTYPE html>
-<html lang="sa">
+<html lang="or">
 <head>
-  <meta charset="UTF-8">
-  <title>chose sanskrit picture by their name</title>
-      
+  <meta charset="utf-8" />
+  <title>ଶ୍ରେଣୀ ୧୦ ଓଡ଼ିଆ ପରୀକ୍ଷା</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    body {
-      background-color: orange;
-      font-family: "Noto Sans Devanagari", sans-serif;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+    :root{--orange:#d35400;--soft:#fff3e0;--btn:#e67e22}
+    body{margin:0;font-family:"Noto Sans Oriya",sans-serif;background:orange;color:#222;font-size:16px;}
+    header{background:var(--orange);color:#fff;padding:6px 8px;text-align:center}
+    h1{margin:0;font-size:18px;animation:glow 6s infinite;text-align:center}
+    @keyframes glow{
+      0%{color:#fff;text-shadow:0 0 8px crimson}
+      25%{color:#ffeb3b;text-shadow:0 0 10px green}
+      50%{color:#00bcd4;text-shadow:0 0 10px blue}
+      75%{color:#e91e63;text-shadow:0 0 10px purple}
+      100%{color:#fff;text-shadow:0 0 8px crimson}
     }
-    header {
-      padding: 20px;
-      background: #d35400;
-      color: white;
+    .wrap{padding:8px;max-width:750px;margin:0 auto}
+    .question{background:var(--soft);border-radius:12px;padding:12px;margin:14px auto;box-shadow:0 4px 10px rgba(0,0,0,.18);text-align:center;display:none}
+    .qtitle{font-size:28px;font-weight:bold;margin-bottom:12px}
+    .options{display:flex;flex-direction:column;gap:8px;align-items:center;font-size:28px}
+    .opt{width:100%;max-width:500px;background:#f8c471;padding:8px;border-radius:12px;cursor:pointer;transition:transform .15s,background .15s;box-shadow:0 2px 6px rgba(0,0,0,.08);text-align:center}
+    .opt:hover{transform:scale(1.02);background:#f5b041}
+    .opt.selected{background:#d35400;color:#fff;font-weight:700}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .controls button{background:var(--btn);color:#fff;border:none;padding:6px 12px;border-radius:10px;cursor:pointer}
+    .controls button:hover{filter:brightness(.95)}
+    .status{margin:10px auto;text-align:center;font-weight:700}
+    #results{display:none;margin-top:16px}
+    #answers{background:var(--soft);padding:16px;border-radius:10px}
+    .answer-block{border-bottom:1px solid #ddd;padding:10px 0}
+    .right{color:green;font-weight:700}.wrong{color:red;font-weight:700}
+
+    /* Popups */
+    #congrats,#wrongPopup{
+      position:fixed;left:50%;top:20%;transform:translateX(-50%) scale(0);
+      background:#fff;padding:18px 26px;border-radius:14px;
+      box-shadow:0 10px 30px rgba(0,0,0,.25);
+      z-index:9999;text-align:center;
     }
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      animation: glow 6s infinite;
+    #congrats.show,#wrongPopup.show{animation:pop .55s forwards}
+    #wrongPopup{border:3px solid red;color:red;}
+    #congrats{border:3px solid green;color:green;}
+    @keyframes pop{
+      0%{transform:translateX(-50%) scale(0);opacity:0}
+      60%{transform:translateX(-50%) scale(1.08);opacity:1}
+      100%{transform:translateX(-50%) scale(1);opacity:1}
     }
-    @keyframes glow {
-      0% { color: #fff; text-shadow: 0 0 10px red; }
-      25% { color: #ff0; text-shadow: 0 0 20px green; }
-      50% { color: #0ff; text-shadow: 0 0 20px blue; }
-      75% { color: #f0f; text-shadow: 0 0 20px purple; }
-      100% { color: #fff; text-shadow: 0 0 10px red; }
+
+    /* Certificate Popup */
+    #certificate {
+      position:fixed;left:0;top:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.7);display:none;z-index:10000;
+      justify-content:center;align-items:center;
     }
-    h2 {
-      margin: 5px 0;
-      font-size: 20px;
-      animation: fadeInOut 6s infinite;
+    .cert-content {
+      background:#fffbea;
+      border:12px solid goldenrod;
+      box-shadow:0 0 30px rgba(0,0,0,0.4);
+      border-radius:20px;
+      padding:40px 30px;
+      text-align:center;
+      max-width:600px;
+      width:90%;
+      animation:fadein 0.8s ease;
+      font-family:"Noto Sans Oriya",sans-serif;
     }
-    @keyframes fadeInOut {
-      0%, 45% { opacity: 0; }
-      50%, 95% { opacity: 1; }
-      100% { opacity: 0; }
+    @keyframes fadein {from{transform:scale(0.8);opacity:0}to{transform:scale(1);opacity:1}}
+    .cert-content h2 {
+      font-size:34px;
+      color:#b9770e;
+      text-shadow:0 0 4px #f1c40f;
+      margin-bottom:12px;
     }
-    .container {
-      padding: 20px;
+    .cert-content p {font-size:20px;color:#333;margin:10px 0;}
+    #retakeBtn, #shareBtn {
+      display:block;
+      margin:10px auto;
+      background:#d35400;
+      color:#fff;
+      border:none;
+      padding:10px 20px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:18px;
+      width:70%;
+      max-width:250px;
     }
-    .question {
-      margin: 20px;
-      background: #fff3e0;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      max-width: 800px auto;
-      display: none;
-      text-align: center;
-    }
-    .emoji {
-      font-size: 100px;
-      margin: 10px auto;
-      animation: bounceZoom 2s infinite;
-    }
-    @keyframes bounceZoom {
-      0%   { transform: scale(1) translateY(0); }
-      25%  { transform: scale(1.2) translateY(-10px); }
-      50%  { transform: scale(1) translateY(0); }
-      75%  { transform: scale(1.1) translateY(-5px); }
-      100% { transform: scale(1) translateY(0); }
-    }
-    .quiz-option {
-      display: block;
-      background: #f8c471;
-      margin: 8px;
-      padding: 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 20px;
-      transition: transform 0.2s, background 0.2s;
-      max-width: 400px;
-    }
-    .quiz-option:hover {
-      background: #f5b041;
-      transform: scale(1.05);
-    }
-    .quiz-option.selected {
-      background: #d35400;
-      color: white;
-      font-weight: bold;
-    }
-    .controls {
-      margin-top: 20px;
-    }
-    .controls button {
-      margin: 5px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background: #e67e22;
-      color: white;
-      font-size: 14px;
-    }
-    .controls button:hover {
-      background: #ca6f1e;
-    }
-    .status {
-      margin: 20px;
-      font-weight: bold;
-    }
-    #results {
-      display: none;
-      background: #fff3e0;
-      padding: 20px;
-      border-radius: 12px;
-      max-width: 900px auto;
-      margin: 20px auto;
-      text-align: left;
-    }
-    .emoji-big {
-      font-size: 60px auto;
-    }
-    .answer-block{
-      border-bottom:1px solid #ccc;
-      padding:10px 0;
-    }
-    .right{color:green;font-weight:bold}
-    .wrong{color:red;font-weight:bold}
-    .summary{font-size:16px;margin-bottom:10px}
-    .q-header{display:flex;align-items:center;justify-content:space-between}
-    /* Congratulation popup */
-    #congrats {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      background: white;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.3);
-      text-align: center;
-      font-size: 34px;
-      color: #e67e22;
-      animation: none;
-      z-index: 9999;
-    }
-    @keyframes popup {
-      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-      50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-    }
-    .flower {
-      font-size: 40px;
-      display: inline-block;
-      animation: float 2s infinite;
-    }
-    @keyframes float {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0); }
-    }
+    #shareBtn {background:#27ae60;}
+    #retakeBtn:hover, #shareBtn:hover {filter:brightness(0.9);}
+    #progress-container {background:#f8c471;border-radius:12px;height:12px;width:100%;margin-bottom:12px;overflow:hidden;}
+    #progress-bar {height:100%;width:0%;background:linear-gradient(90deg,#d35400,#f1c40f,#d35400);background-size:200% 100%;border-radius:12px;transition:width 0.4s ease;animation:shine 2s linear infinite;}
+    @keyframes shine {0%{background-position:0% 0}100%{background-position:200% 0}}
   </style>
 </head>
 <body>
   <header>
-    <h1></h1>
-    <h1>जयतु भारतम् &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;आधुनिककक्षायां सुस्वागतम्  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;जयतु संस्कृतम्</h1>
+    <h1>ବନ୍ଦେ ଉତ୍କଳ ଜନନୀ</h1>
   </header>
-<div id="candidate-section" style="background:#fff3e0; padding:20px; text-align:left; max-width:800px; margin:20px auto; border-radius:12px;">
-  <h2 style="text-align:center;">ପ୍ରବେଶ ପୃଷ୍ଠା (Candidate Page)</h2>
-  <label>ନାମ (Name): <input type="text" id="cand-name" style="margin: 5px 10px; padding:5px;"></label><br><br>
-  <label>ରୋଲ୍ ନମ୍ବର୍ (Roll No.): <input type="text" id="cand-roll" style="margin: 5px 10px; padding:5px;"></label><br><br>
-  <label>ଶ୍ରେଣୀ (Class): <input type="text" id="cand-class" style="margin: 5px 10px; padding:5px;"></label><br><br>
-  <button onclick="startExam()" style="background:#e67e22; color:white; padding:10px 20px; border:none; border-radius:8px;">ପରିକ୍ଷା ଆରମ୍ଭ କର</button>
-</div>
 
-  <div id="exam-content" class="container" style="display:none;">
+  <div class="wrap">
+    <div id="progress-container"><div id="progress-bar"></div></div>
     <div id="quiz"></div>
 
     <div class="controls">
-      <button onclick="prevQuestion()">ପୂର୍ବ ପ୍ରଶ୍ନ</button>
-      <button onclick="nextQuestion()">ପର ପ୍ରଶ୍ନ</button>
-      <button onclick="markReview()">ପୁଣି ଦେଖିବି</button>
-      <button onclick="finishExam()">ପରିକ୍ଷା ଶେଷ</button>
+      <button onclick="prevQuestion()">⬅️ ପୂର୍ବ ପ୍ରଶ୍ନ</button>
+      <button onclick="nextQuestion()">ପରବର୍ତ୍ତୀ ପ୍ରଶ୍ନ ➡️</button>
+      <button onclick="finishExam()">ଅଭ୍ୟାସ ଶେଷ</button>
     </div>
-    <div class="status" id="status">Attempted : 0 | Unattempted: 0 | Review: 0</div>
+
+    <div class="status" id="status">କରାଯାଇଛି : ୦ | ବାକୀ : ୦</div>
 
     <div id="results">
-      <h3>भवतः उत्तराणि</h3>
+      <h3>ଉତ୍ତରଗୁଡିକ</h3>
       <div id="answers"></div>
-      <div style="margin-top:20px; text-align:center;">
-  <button onclick="window.print()" style="background:#27ae60;">🖨️ ପ୍ରିଣ୍ଟ୍</button>
-  <button onclick="shareResult()" style="background:#2980b9;">🔗 ଅଂଶୀଦାର କର</button>
-     <h3>ଅଭିଯାର୍ଥୀ ବିବରଣୀ (Candidate Details)</h3>
-<p><strong>ନାମ:</strong> <span id="res-name"></span> &nbsp;&nbsp; <strong>ରୋଲ୍:</strong> <span id="res-roll"></span> &nbsp;&nbsp; <strong>ଶ୍ରେଣୀ:</strong> <span id="res-class"></span></p>
-        
-      </div>
-      
     </div>
   </div>
 
+  <!-- Correct / Wrong Popups -->
   <div id="congrats">
-    <div class="flower">🌸🌼🌺</div>
-    <p>💐 अभिनन्दनम्! 💐</p>
-    <div class="flower">🌺🌼🌸</div>
+    <div style="font-size:26px">🎉 ଠିକ୍ ଉତ୍ତର 🎉</div>
+  </div>
+  <div id="wrongPopup">
+    <div style="font-size:26px">❌ ଭୁଲ ଉତ୍ତର ❌</div>
   </div>
 
-  <script>
-    const questions = [
-      {emoji:"📕", options:["पुस्तकम्","फलम्","पात्रम्","दर्पणः"], answer:0},
-      {emoji:"✏️", options:["लेखनी","पादुकाः","मणिः","घटी"], answer:0},
-      {emoji:"🍎", options:["सेवफलम्","पुष्पम्","दीपः","घण्टा"], answer:0},
-      {emoji:"🌸", options:["पुष्पम्","फलम्","पत्रम्","शङ्खः"], answer:0},
-      {emoji:"👟", options:["पादुकाः","पुस्तकम्","घटी","लेखनी"], answer:0},
-      {emoji:"🍌", options:["कदलीफलम्","पत्रम्","कन्दुकः","शालिका"], answer:0},
-      {emoji:"⚽", options:["कन्दुकः","पुष्पम्","फलम्","मणिः"], answer:0},
-      {emoji:"🪞", options:["दर्पणः","लेखनी","पादुकाः","पत्रम्"], answer:0},
-      {emoji:"💡", options:["दीपः","फलम्","दर्पणः","कन्दुकः"], answer:0},
-      {emoji:"⏰", options:["घटी","पात्रम्","फलम्","पत्रम्"], answer:0},
-      {emoji:"💐", options:["पुष्पगुच्छम्","पात्रम्","फलम्","पत्रम्"], answer:0},
-{emoji:"⭐", options:["तारका","पात्रम्","फलम्","पत्रम्"], answer:0},
-{emoji:"☀️", options:["रविः","पात्रम्","चन्द्रः","पत्रम्"], answer:0},
-{emoji:"🐒", options:["वानरः","सोमः","सूर्यः","पत्रम्"], answer:0},
-{emoji:"🐅", options:["व्याघ्रः","सिंहः","श्वानः","पत्रम्"], answer:0},
-{emoji:"🌜", options:["चन्द्रः","पात्रम्","सूर्यः","पत्रम्"], answer:0},
-{emoji:"🧍", options:["वालिका","पात्रम्","चन्द्रः","पत्रम्"], answer:0},
-{emoji:"🚶", options:["वालकः","सोमः","सूर्यः","पत्रम्"], answer:0},
-{emoji:"🦮", options:["श्वानः","सिंहः","व्याघ्रः","पत्रम्"], answer:0},
-{emoji:"🐘", options:["गजः","श्वानः","सूर्यः","पत्रम्"], answer:0},
-{emoji:"🐀", options:["मुषकः","सर्पः","फलम्","मणिः"], answer:0},
-      {emoji:"🐎", options:["अश्वः","लेखनी","पादुकाः","पत्रम्"], answer:0},
-      {emoji:"🦌", options:["मृगः","श्वानः","देवः","कन्दुकः"], answer:0},
-      {emoji:"🐓", options:["कुकुटः","नरः","मिता","पत्रम्"], answer:0},
-      {emoji:"🦚", options:["मयुरः","अश्वः","मत्स्यः","पत्रम्"], answer:0},
-    ];
+  <!-- Certificate Popup -->
+  <div id="certificate">
+    <div class="cert-content">
+      <h2>🏆 ଅଭିନନ୍ଦନ 🏆</h2>
+      <p id="certResult"></p>
+      <p id="certPercent"></p>
+      <p id="certTime"></p>
+      <button id="retakeBtn" onclick="retakeTest()">🔁 ପୁଣି ପରୀକ୍ଷା ଦିଅନ୍ତୁ</button>
+      <button id="shareBtn" onclick="shareResult()">📢 ସେୟାର କରନ୍ତୁ</button>
+    </div>
+  </div>
 
-    function shuffleArray(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-  return arr;
-}
+<script>
+const questions=[
+  {"text": "ଜନ୍ମଭୂମି ପ୍ରବନ୍ଧର ପ୍ରାବନ୍ଧିକଙ୍କ ନାମ କ'ଣ?", "options": ["ମନୋରଂଜନ ଦାସ", "ବଂଶୀଧର ସାମନ୍ତରାୟ", "ଗୋଲକ ବିହାରୀ ଧଳ", "କୃଷ୍ଣଚନ୍ଦ୍ର ପାଣିଗ୍ରାହୀ"], "answer": 3},
+  {"text": "ଲେଖକ କୃଷ୍ଣଚନ୍ଦ୍ର ପାଣିଗ୍ରାହୀ କେଉଁ ମସିହାରେ ଜନ୍ମ ଗ୍ରହଣ କରିଥିଲେ?", "options": ["୧୯୦୯", "୧୯୧୦", "୧୯୧୧", "୧୯୧୨"], "answer": 0},
+  {"text": "ପ୍ରାବନ୍ଧିକଙ୍କ ମୃତ୍ୟୁ କେବେ ହୋଇଥିଲା?", "options": ["୧୯୮୦", "୧୯୮୨", "୧୯୮୭", "୧୯୮୫"], "answer": 2},
+  {"text": "ପ୍ରାବନ୍ଧିକ କେଉଁଠାରେ ଜନ୍ମଗ୍ରହଣ କରିଥିଲେ?", "options": ["ଖିଚିଙ୍ଗ", "ପୁରୀ", "ବାଲେଶ୍ଵର", "ଭଦ୍ରକ"], "answer": 0},
+  {"text": "ଜନ୍ମଭୂମି ପ୍ରବନ୍ଧଟି କେଉଁ ପ୍ରବନ୍ଧ ସଂକଳନରୁ ଉଦ୍ଧୃତ?", "options": ["ଇତିହାସ ଓ କିମ୍ୱଦନ୍ତୀ", "ମୋ ସମୟର ଓଡ଼ିଶା", "ପ୍ରବନ୍ଧ ମାନସ", "ସାରଳା ସାହିତ୍ୟର ଐତିହାସିକ ଚିତ୍ର"], "answer": 2},
+  {"text": "ଜନ୍ମଭୂମି ପ୍ରବନ୍ଧଟିରେ ଲେଖକ କାହାର ପ୍ରକୃତ ଅର୍ଥ ସନ୍ଧାନ କରିଛନ୍ତି?", "options": ["ଜନ୍ମଭୂମି", "ସହର", "ଗ୍ରାମ", "ପାଶ୍ଚାତ୍ୟ ନଗର"], "answer": 0},
+  {"text": "ଲେଖକ କାହାକୁ ନିଜର ମାତା, ଧାତ୍ରୀ ଓ ଶିକ୍ଷୟିତ୍ରୀ ବୋଲି କହିଛନ୍ତି?", "options": ["ଓଡ଼ିଶା", "ପଲ୍ଲୀଗ୍ରାମ", "ଭାରତ", "ପୃଥିବୀ"], "answer": 1},
+  {"text": "ଲେଖକଙ୍କର ସମ୍ବନ୍ଧ କାହା ସହିତ କ୍ଷୀଣ ହେବାକୁ ଲାଗିଛି?", "options": ["ପଲ୍ଲୀ", "ସହର", "ମାତୃଭୂମି", "ଜନନୀ"], "answer": 0},
+  {"text": "ପ୍ରାବନ୍ଧିକ ଆୟକୁ ଜାହା ସହିତ ତୁଳନା କରିଛନ୍ତି?", "options": ["ସୂର୍ଯ୍ୟଙ୍କ ସହ", "ଚନ୍ଦ୍ରଙ୍କ ସହ", "ଶିବଙ୍କ ସହ", "ବୃହସ୍ପତିଙ୍କ ସହ"], "answer": 0},
+  {"text": "ଲେଖକଙ୍କର ପଲ୍ଲୀ ପ୍ରତି ଏକମାତ୍ର କର୍ତ୍ତବ୍ୟ କ'ଣ?", "options": ["ଗ୍ରାମକୁ ଅର୍ଥଦାନ", "ଗ୍ରାମରେ ରହିବା", "ଜନ୍ମସ୍ଥାନ ପଲ୍ଲୀଭୂମିର ସେବା କରିବା", "ଗ୍ରାମଠୁ ଦୂରେଇ ଯିବା"], "answer": 2},
+  {"text": "ଶିକ୍ଷା ସମାପନ ସହିତ ଶିକ୍ଷିତମାନଙ୍କର ଏକ ପ୍ରକାର କ'ଣ ଘଟିଥାଏ?", "options": ["ପୁନର୍ଜନ୍ମ", "ଜୀବିକାର୍ଜନ", "ଜାତିସ୍ମର", "ଧର୍ମାନ୍ତର"], "answer": 0},
+  {"text": "ପଲ୍ଲୀର ନରନାରୀଙ୍କ ମଧ୍ୟରେ କେଉଁ ପରମ୍ପରା ଗଢ଼ି ଉଠିଥାଏ?", "options": ["ସ୍ବାର୍ଥପରତା", "ସହରୀ ପରମ୍ପରା", "ଏକ ପରିବାରତ୍ବ", "ଯୌଥ ପରିବାରତ୍ବ"], "answer": 2},
+  {"text": "ସାର ମାଉସୀ ଗ୍ରାମ ମୁଣ୍ଡରେ କେଉଁଠାରେ ବହୁ ବର୍ଷ ଧରି ପ୍ରସ୍ତର ମୂର୍ତି ପରି ବସି ଆସିଛି?", "options": ["ବରଗଛ ମୂଳେ", "ଦାଣ୍ଡରେ", "ଛୋଟ ପିଣ୍ଡାରେ", "ଆସନରେ"], "answer": 2},
+  {"text": "ଗ୍ରାମର ମଝିରେ କାହାର ଘର?", "options": ["ହରି", "ଗୋପାଳ", "ଗୋବିନ୍ଦା", "ଗଣେଶ"], "answer": 2},
+  {"text": "ଗୋବିନ୍ଦା ଭାଇ ଲେଖକଙ୍କ ପାଖରେ କ'ଣ ବାଖ୍ୟା କରୁଥିଲା?", "options": ["ଭାଗବତ", "ମନବୋଧ ଚଉତିଶା", "ଗୀତା", "ପୁରାଣ"], "answer": 1},
+  {"text": "ଗୋବିନ୍ଦା ଭାଇ କାହାକୁ ଦୁର୍ଗ କରି ସମଗ୍ର ବିଶ୍ବ ବିରୋଧରେ ବିଦ୍ରୋହ ଘୋଷଣା କରୁଥିଲା?", "options": ["ତା'ର କୁଟୀରକୁ", "ପଲ୍ଲୀ ଗ୍ରାମକୁ", "ଭାଗବତ ଟୁଙ୍ଗୀକୁ", "ଗାଁ ଦାଣ୍ଡକୁ"], "answer": 0},
+  {"text": "ଗ୍ରାମଟି କେଉଁଥିରେ ପରିପୂର୍ଣ୍ଣ ହୋଇଗଲାଣି?", "options": ["ସ୍ୱର୍ଣଶୀର୍ଷ ଧାନ୍ୟରେ", "ନବାଗତ ଅତିଥିରେ", "ବୃକ୍ଷରାଜିରେ", "ଟିଉବ୍‌ରେ"], "answer": 1},
 
-// shuffle options and adjust answer index
-questions.forEach(q => {
-  const correctAnswer = q.options[q.answer];
-  q.options = shuffleArray(q.options);
-  q.answer = q.options.indexOf(correctAnswer);
+  {"text": "ବେକାର ଯୁବଗୋଷ୍ଠୀ ପୁଷ୍ପିତ ପଳାଶବନରେ କ'ଣ ଦେଖନ୍ତି?", "options": ["ଆହତର ରକ୍ତ", "ରକ୍ତକେତନ", "ବିଦ୍ରୋହର ବହ୍ନି", "ଲାଲଝଣ୍ଡା"], "answer": 2},
+  {"text": "ବେକାର ଯୁବଗୋଷ୍ଠୀ କେଉଁଠାରେ ଦେଖନ୍ତି ଆହବର ରକ୍ତ?", "options": ["ପଳାଶ ବନରେ", "କୃଷ୍ଣଚୂଡ଼ାରେ", "ଗୋଲାପ ବନରେ", "ସୁଳପଦ୍ମରେ"], "answer": 3},
+  {"text": "ପଲ୍ଲୀର କର୍ମ ଯୋଜନାରେ ଅଂଶଗ୍ରହଣ ପାଇଁ ପ୍ରାବନ୍ଧିକଙ୍କ ନିକଟରେ କେଉଁ ଶକ୍ତିର ଅଭାବ ଅଛି?", "options": ["ଭୌତିକ", "ମାନସିକ", "ନୈତିକ", "ଦୈବୀ"], "answer": 2},
+  {"text": "ପ୍ରାବନ୍ଧିକ ଜନ୍ମଭୂମିରୁ ଖାଲି କ'ଣରୁ ବିଚ୍ୟୁତ ହୋଇଛନ୍ତି?", "options": ["ଦେଶ", "ମନରୁ ନୁହଁ କର୍ମରୁ", "ପର୍ବ", "ସ୍ନେହ"], "answer": 1},
+  {"text": "ନୂଆ ମେଘକୁ କେଉଁମାନେ ଚାହିଁ ରୁହନ୍ତି?", "options": ["ଗ୍ରାମବାସୀ", "ପଲ୍ଲୀଜନ", "ଚାଷୀକୂଳ", "ଉପରୋକ୍ତ ସମସ୍ତ"], "answer": 3},
+ 
+  {"text": "ରଜପର୍ବରେ ଗ୍ରାମବାସୀମାନେ କ'ଣ ଖେଳନ୍ତି?", "options": ["ଦୋଳି", "ପଶା", "ଯୁଆ", "କବାଡ଼ି"], "answer": 0},
+  {"text": "ଗ୍ରାମ ମଧ୍ୟରେ ଏକ ପରିବାରତ୍ବର ପରମ୍ପରା ସ୍ବରୂପ କେଉଁଟି?", "options": ["ମନବୋଧ ଚଉତିଶା ବାଖ୍ୟା ଶୁଣାଇବା", "ଜାତିବର୍ଣ୍ଣ ନିର୍ବିଶେଷ ଭାବରେ ପରସ୍ପର ସଂପର୍କ ରଖିବା", "ଅତିଥି ସମ୍ବାଦ", "ପର୍ବରେ ଭୁଲିଯିବା"], "answer": 1},
+  {"text": "ଧରଣୀ ଶସ୍ୟଶ୍ୟାମଳା ହେବାରେ କାହାର ଶ୍ରମ ନିହିତ?", "options": ["ଶ୍ରମଜୀବିମାନଙ୍କ", "ନବଯୁବକଙ୍କ", "ନବାଗତମାନଙ୍କ", "ବୃଦ୍ଧମାନଙ୍କ"], "answer": 0},
+  {"text": "ଗ୍ରାମର କର୍ମଯୋଜନାରେ କାହାର ସ୍ଥାନ ନାହିଁ?", "options": ["ନବଯୁବକ", "ଗୋବିନ୍ଦା ଭାଇ", "ଲେଖକ", "ସାର ମାଉସୀ"], "answer": 2},
+  {"text": "ଗ୍ରାମ ଭୂମିର ପୂର୍ଣ୍ଣତା କେଉଁ ସମୟରେ?", "options": ["ଗ୍ରୀଷ୍ମ ଖରା", "ଜ୍ୟେଷ୍ଠ ବର୍ଷା", "ହେମନ୍ତ ସ୍ୱର୍ଣଶୀର୍ଷ ଧାନ", "ଶୀତ କାକର ବିନ୍ଦୁ"], "answer": 2},
+  {"text": "କୃଷ୍ଣ କେଉଁଠିକୁ ତିନି ଦିନ ରହି ଯାଇଥିଲେ?", "options": ["ବୃନ୍ଦାବନ", "ମଥୁରା", "ଗୋପପୁର", "ଦ୍ବାରକା"], "answer": 1},
+  {"text": "ଜନ୍ମଭୂମି ପ୍ରତି ବିଶ୍ୱାସଘାତକତାରୁ କିଏ ପାର ପାଇନଥିଲେ?", "options": ["ରାମ", "କୃଷ୍ଣ", "ବୁଦ୍ଧ", "ୟୀଶୁ"], "answer": 1},
+  {"text": "କିଏ ଶଶିକଳା ପରି ଦୀନା କ୍ଷୀଣା ହୋଇଗଲେ?", "options": ["ରାଧା", "ଗୋପନାରୀ", "ୟଶୋଦା", "ନନ୍ଦରାଜା"], "answer": 0},
+  {"text": "କୃଷ୍ଣ କେଉଁଠି ନିଜର ସାମ୍ରାଜ୍ୟ ସ୍ଥାପନ କରିଥିଲେ?", "options": ["ଗୋପପୁର", "ଦ୍ବାରକା", "ବୃନ୍ଦାବନ", "ମଥୁରା"], "answer": 1},
+  {"text": "କୃଷ୍ଣଙ୍କ ଅଭ୍ରଂକଷ ପ୍ରାସାଦ କେଉଁଠି ନିମଗ୍ନ ହେଲା?", "options": ["ସମୁଦ୍ର", "ନଦୀ", "ଅତଳ ଜଳଧି", "ପୁଷ୍କରିଣୀ"], "answer": 2},
+  {"text": "ଦ୍ବାରକାର ଯଦୁବଂଶ କେଉଁଠି ଧ୍ୱଂସ ହୋଇଗଲେ?", "options": ["ପ୍ରଭାସ ତୀର୍ଥ", "ପୁଷ୍କର ତୀର୍ଥ", "ଦ୍ବାରକା", "ଓଡ଼େପାତୀର୍ଥ"], "answer": 0},
+  {"text": "ଦ୍ଵାରକାର ରାଜଭୋଗରେ କୃଷ୍ଣଙ୍କ ପାଦୁକା କିପରି ବର୍ଣ୍ଣ ଧାରଣ କରିଥିଲା?", "options": ["ଅଗ୍ନି ପରି", "ନବ ପୁଷ୍ପିତ ପଲ୍ଲବ", "ଆକାଶ ମେଘ", "ନବପଲ୍ଲବ ପରି ରକ୍ତାଭ"], "answer": 3},
+  {"text": "ବୃନ୍ଦାବନର ପୁଷ୍ପିତ କଦମରେ ଆଜି ମଧ୍ୟ କିଏ ନୃତ୍ୟ କରିଥାଏ?", "options": ["ମୟୂର", "ହରିଣୀ", "ହଂସ", "ବନ୍ୟପକ୍ଷୀ"], "answer": 0},
+  {"text": "ଯାହାର ଲୌହଶର ଶ୍ରୀକୃଷ୍ଣଙ୍କ ପଦବିଦ୍ଧ କରିଥିଲା?", "options": ["ବ୍ୟାଧ", "ଶତ୍ରୁ", "ମଦ୍ୟପ ବଂଶଧର", "ଅର୍ଜୁନ"], "answer": 0},
+  {"text": "ଏଟ୍ଲାସ ଦେବତା ଅଟନ୍ତି?", "options": ["ଭାରତୀୟ", "ମିଶରୀୟ", "ଗ୍ରୀସୀୟ", "ଇଉରୋପୀୟ"], "answer": 2},
+  {"text": "ଗୋପପୁର ଓ ମଥୁରା ମଧ୍ୟରେ କେଉଁ ନଦୀ ବହି ଚାଲିଛି?", "options": ["ଗଙ୍ଗା", "ସରଜୁ", "ସରସ୍ୱତୀ", "ୟମୁନା"], "answer": 3},
+  {"text": "ପ୍ରାବନ୍ଧିକ ତାଙ୍କ ଜନ୍ମଭୂମିକୁ କାହା ସହ ତୁଳନା କରିଛନ୍ତି?", "options": ["ପୃଥିବୀ ସହିତ", "ଆକାଶ ସହିତ", "ସୂର୍ଯ୍ୟ ସହିତ", "ମାତା, ଧାତ୍ରୀ ଓ ଶିକ୍ଷୟିତ୍ରୀ"], "answer": 3},
+  {"text": "ବଂଶୀ ସୁନିଲେ କାହାର ମନ ଅହେତୁକ ଓ ଅନାହୃତ ବ୍ୟଥାରେ ଭାରାକ୍ରାନ୍ତ ହୋଇଉଠେ?", "options": ["ଦ୍ବାରକାର ଅଷ୍ଟପାଟ ବଂଶୀ", "ଅନୁଢା ଗୋପକନ୍ୟା", "ମଧୁରା କିଶୋରୀ", "ଦ୍ବାରକା ନାରୀ"], "answer": 1},
+  {"text": "କେଉଁ ଦେବତା ବିଶ୍ୱର ସମସ୍ତ ଭାର ବହନ କରି କୁବ୍ଜା ହୋଇଛନ୍ତି?", "options": ["ୟୀଶୁ", "ଏଟ୍ଲାସ", "କୃଷ୍ଣ", "ନାନକ"], "answer": 1}
+
+];
+function shuffleArray(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]]}return arr;}
+shuffleArray(questions);
+questions.forEach(q=>{const correct=q.options[q.answer];shuffleArray(q.options);q.answer=q.options.indexOf(correct);});
+function toOdiaNum(num){const d=['୦','୧','୨','୩','୪','୫','୬','୭','୮','୯'];return String(num).split('').map(x=>d[x]).join('');}
+const quizContainer=document.getElementById('quiz');
+questions.forEach((q,i)=>{
+  const d=document.createElement('div');d.className='question';d.id='q'+(i+1);
+  const qNum=toOdiaNum(i+1),total=toOdiaNum(questions.length);
+  d.innerHTML=`<div class="qtitle"><strong>ପ୍ରଶ୍ନ ${qNum}.</strong> ${q.text}</div>
+  <div class="options">${q.options.map((opt,ji)=>`<div class="opt" data-index="${ji}" onclick="selectOption(${i+1},this)">${opt}</div>`).join('')}</div>
+  <div class="meta">ପ୍ରଶ୍ନ ${qNum} / ${total}</div>`;
+  quizContainer.appendChild(d);
 });
-// shuffle questions (no repeat)
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
-    shuffle(questions);
-
-    const container = document.getElementById('quiz');
-    questions.forEach((q,i)=>{
-      const div = document.createElement('div');
-      div.className = 'question';
-      div.id = 'q'+(i+1);
-      div.innerHTML = `
-        <div class='q-header'>
-          <h3>Q${i+1}. चित्रं दृष्ट्वा संस्कृतनाम चयनं करोतु। (ଚିତ୍ର ଦେଖି ସଂସ୍କୃତ ନାମ ଚୟନ କର)</h3>
-        </div>
-        <div class='emoji' aria-hidden='true'>${q.emoji}</div>
-        <div class='options'>
-          ${q.options.map((opt,j)=>`<div class='quiz-option' onclick='selectOption(${i+1}, this, ${q.answer})'>${opt}</div>`).join('')}
-        </div>
-      `;
-      container.appendChild(div);
-    });
-
-    let current = 1;
-    let attempted = 0, notAttempted = questions.length, marked = 0;
-    let answersMap = {};
-
-    function showQuestion(n){
-      document.querySelectorAll('.question').forEach(q=>q.style.display='none');
-      const el = document.getElementById('q'+n);
-      if(el) el.style.display='block';
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
-
-    function updateStatus() {
-  attempted = Object.keys(answersMap).length;
-  notAttempted = questions.length - attempted;
-  document.getElementById("status").innerText = 
-      `ଉତ୍ତର ଦିଆଗଲା : ${attempted} | ଉତ୍ତର ଦିଆଯାଇ ନାହିଁ : ${notAttempted} | ପୁଣି ଦେଖିବାକୁ ରଖାଯାଇଛି : ${marked}`;
+let current=1,answersMap={},startTime=Date.now();
+function showQuestion(n){
+  document.querySelectorAll('.question').forEach(el=>el.style.display='none');
+  const el=document.getElementById('q'+n);
+  if(el)el.style.display='block';
+  current=n;updateProgress();window.scrollTo({top:0,behavior:'smooth'});
 }
-
-
-    function showCongrats() {
-      const congrats = document.getElementById("congrats");
-      congrats.style.animation = "popup 0.6s forwards";
-      setTimeout(()=>{ congrats.style.animation = "none"; congrats.style.transform="translate(-50%, -50%) scale(0)"; },2000);
-    }
-
-    function selectOption(qNum, element, correctIndex){
-      const options = document.querySelectorAll(`#q${qNum} .quiz-option`);
-      options.forEach(opt=>opt.classList.remove('selected'));
-      element.classList.add('selected');
-      answersMap[qNum] = element.innerText.trim();
-
-      const correctValue = options[correctIndex].innerText.trim();
-      if(element.innerText.trim() === correctValue){
-        showCongrats();
-      }
-      updateStatus();
-    }
-
-    function prevQuestion() {
-      if(current>1){ current--; showQuestion(current);} 
-    }
-
-    function nextQuestion() {
-      if(current<questions.length){ current++; showQuestion(current);} 
-    }
-
-    function markReview() {
-      marked++;
-      updateStatus();
-    }
-document.getElementById("res-name").innerText = document.getElementById("cand-name").value;
-document.getElementById("res-roll").innerText = document.getElementById("cand-roll").value;
-document.getElementById("res-class").innerText = document.getElementById("cand-class").value;
-    
-    function finishExam() {
-      let correctCount = 0;
-      let answers = "";
-
-      for(let i=0;i<questions.length;i++){
-        const qNum = i+1;
-        const q = questions[i];
-        const correctValue = q.options[q.answer];
-        const studentValue = answersMap[qNum] || null;
-        const isCorrect = studentValue !== null && studentValue === correctValue;
-        if(isCorrect) correctCount++;
-
-        const symbol = isCorrect ? '✅' : '❌';
-        const symbolClass = isCorrect ? 'right' : 'wrong';
-
-        answers += `<div class='answer-block'>
-          <div style='display:flex;justify-content:space-between;align-items:center'>
-            <div><strong>Q${qNum}.</strong></div>
-            <div class='emoji-small'>${q.emoji}</div>
-          </div>
-          <p>ଉତ୍ତର :- <span class='${symbolClass}'>${studentValue ? studentValue + ' ' + symbol : 'ଦିଆ ଯାଇ ନାହିଁ ❌'}</span></p>
-          <p>ଠିକ୍ ଉତ୍ତର <strong>${correctValue}</strong></p>
-          <p>ବିକଳ୍ପ ଗୁଡିକ ${q.options.join(', ')}</p>
-        </div>`;
-      }
-
-      const summary = `<div class='summary'><strong>योगफल:</strong> योग्य: ${correctCount} / ${questions.length} — प्रयत्नाः: ${attempted} — अनुत्तरित: ${notAttempted}</div>`;
-      document.getElementById("answers").innerHTML = summary + answers;
-      document.getElementById("quiz").style.display = "none";
-      document.getElementById("results").style.display = "block";
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
-function startExam() {
-  const name = document.getElementById("cand-name").value.trim();
-  const roll = document.getElementById("cand-roll").value.trim();
-  const cls = document.getElementById("cand-class").value.trim();
-
-  if (!name || !roll || !cls) {
-    alert("ଦୟାକରି ସମସ୍ତ ତଥ୍ୟ ଭରଣ କରନ୍ତୁ।");
-    return;
-  }
-
-  document.getElementById("candidate-section").style.display = "none";
-  document.getElementById("exam-content").style.display = "block";
-  showQuestion(current);
-  updateStatus();
+function updateProgress(){
+  const attempted=Object.keys(answersMap).length;
+  const progress=(attempted/questions.length)*100;
+  document.getElementById('progress-bar').style.width=progress+'%';
 }
-
-function shareResult() {
-  const name = document.getElementById("cand-name").value.trim();
-  const correctCount = Object.entries(answersMap).filter(([qNum, ans], index) => {
-    const q = questions[qNum - 1];
-    return ans === q.options[q.answer];
-  }).length;
-
-  const text = `🔔 ନାମ: ${name}\n📊 ଫଳାଫଳ: ${correctCount} / ${questions.length}\nजयतु संस्कृतम् 🇮🇳`;
-
-  if (navigator.share) {
-    navigator.share({
-      title: "ମୋର ପରୀକ୍ଷା ଫଳାଫଳ",
-      text: text
-    }).catch(err => console.log('Share canceled or failed', err));
-  } else {
-    alert("Sharing not supported on this browser.");
+function updateStatus(){
+  const attempted=Object.keys(answersMap).length;
+  const notAttempted=questions.length-attempted;
+  document.getElementById('status').innerText=`ଚେଷ୍ଟା କରାଯାଇଛି : ${toOdiaNum(attempted)} | ବାକୀ : ${toOdiaNum(notAttempted)}`;
+}
+function triggerPopup(id){
+  const popup=document.getElementById(id);
+  popup.classList.add('show');
+  setTimeout(()=>popup.classList.remove('show'),1500);
+}
+function selectOption(qNum,el){
+  document.querySelectorAll(`#q${qNum} .opt`).forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  answersMap[qNum]=el.innerText.trim();
+  const correct=questions[qNum-1].options[questions[qNum-1].answer];
+  if(el.innerText.trim()===correct){triggerPopup('congrats');}
+  else{triggerPopup('wrongPopup');}
+  updateStatus();updateProgress();
+}
+function prevQuestion(){if(current>1)showQuestion(current-1);}
+function nextQuestion(){if(current<questions.length)showQuestion(current+1);}
+function finishExam(){
+  const endTime=Date.now();
+  const totalSec=Math.floor((endTime-startTime)/1000);
+  const minutes=Math.floor(totalSec/60),seconds=totalSec%60;
+  const timeTaken=`${toOdiaNum(minutes)} ମିନିଟ୍ ${toOdiaNum(seconds)} ସେକେଣ୍ଡ`;
+  let correctCount=0,html='';
+  for(let i=0;i<questions.length;i++){
+    const qNum=i+1,q=questions[i],correct=q.options[q.answer];
+    const given=answersMap[qNum]||null;
+    const ok=given!==null && given===correct;
+    if(ok)correctCount++;
+    html+=`<div class="answer-block">
+      <div><strong>ପ୍ରଶ୍ନ ${toOdiaNum(qNum)}.</strong> ${q.text}</div>
+      <p>ଦିଆଯାଇଥିବା ଉତ୍ତର: <span class="${ok?'right':'wrong'}">${given||'ଦିଆଯାଇନି'}</span></p>
+      <p>ଠିକ୍ ଉତ୍ତର: <strong>${correct}</strong></p>
+    </div>`;
   }
-    }
-    
-    showQuestion(current);
-    updateStatus();
-  </script>
+  const percent=(correctCount/questions.length)*100;
+  const summary=`<div class="summary">ମୋଟ ଫଳାଫଳ : ${toOdiaNum(correctCount)} / ${toOdiaNum(questions.length)} (${percent.toFixed(1)}%)</div>`;
+  document.getElementById('answers').innerHTML=summary+html;
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  if(percent>=50){
+    setTimeout(()=>{
+      const cert=document.getElementById('certificate');
+      document.getElementById('certResult').innerText=`ମୋଟ ନମ୍ବର : ${toOdiaNum(correctCount)} / ${toOdiaNum(questions.length)}`;
+      document.getElementById('certPercent').innerText=`ପ୍ରତିଶତ ରେ ଫଳାଫଳ : ${percent.toFixed(1)}%`;
+      document.getElementById('certTime').innerText=`ଲାଗିଥିବା ସମୟ : ${timeTaken}`;
+      cert.style.display='flex';
+    },1200);
+  }
+}
+function retakeTest(){location.reload();}
+function shareResult(){
+  const result=document.getElementById('certResult').innerText;
+  const percent=document.getElementById('certPercent').innerText;
+  const time=document.getElementById('certTime').innerText;
+  const text=`🎉 ମୁଁ ମୋ ଓଡ଼ିଆ ପରୀକ୍ଷାରେ ଜିତିଛି!\n${result}\n${percent}\n${time}\nଆପଣ ମଧ୍ୟ ପରୀକ୍ଷା ଦିଅନ୍ତୁ! 💪`;
+  if(navigator.share){
+    navigator.share({title:"ମୋ ଓଡ଼ିଆ ପରୀକ୍ଷା ଫଳାଫଳ",text:text,url:window.location.href});
+  }else{
+    alert("ସେୟାର ସୁବିଧା ଏହି ଯନ୍ତ୍ରରେ ଉପଲବ୍ଧ ନୁହେଁ ।");
+  }
+}
+showQuestion(1);
+updateStatus();
+updateProgress();
+</script>
 </body>
 </html>
-
-
-
